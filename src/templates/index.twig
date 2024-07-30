@@ -1,0 +1,15 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+
+<section>
+  <h1>HELLO WORLD</h1>
+  {% if connected %}
+    <a href="/logout">Se déconnecter</a>
+  {% else %}
+    <a href="/connection">Se connecter</a>
+    <a href="/register">Créer mon compte</a>
+  {% endif %}
+</section>
+{% endblock %}
+

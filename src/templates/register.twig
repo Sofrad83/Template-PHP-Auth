@@ -1,0 +1,17 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+
+<div>
+    <form action="/create-user" method="POST">
+        <label for="">Username</label>
+        <input type="text" name="username" id="username">
+        <label for="">Email</label>
+        <input type="text" name="email" id="username">
+        <label for="">Password</label>
+        <input type="text" name="password" id="username">
+        <button type="submit">Créer mon compte</button>
+    </form>
+</div>
+{% endblock %}
+
