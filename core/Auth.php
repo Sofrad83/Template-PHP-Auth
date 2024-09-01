@@ -1,13 +1,11 @@
 <?php
-namespace App\Support;
+namespace Core;
 
 class Auth {
-    private static $dbQuery;
     private static $sessionDuration;
     private static $user;
 
-    public static function init($dbQuery, $sessionDuration = 120){
-        self::$dbQuery = $dbQuery;
+    public static function init($sessionDuration = 120){
         self::$sessionDuration = $sessionDuration;
         session_start();
     }
@@ -39,13 +37,13 @@ class Auth {
         $token = bin2hex(random_bytes(16));
         setcookie('remember_me', $token, time() + (30 * 24 * 60 * 60), "/"); // Cookie valable 30 jours
 
-        self::$dbQuery->execute("UPDATE user SET token = :token WHERE id = :id", ['token' => $token, 'id' => $user->id]);
+       DB::execute("UPDATE user SET token = :token WHERE id = :id", ['token' => $token, 'id' => $user->id]);
     }
 
     public static function checkRememberMe() {
         if (isset($_COOKIE['remember_me'])) {
             $token = $_COOKIE['remember_me'];
-            $stmt = self::$dbQuery->query("SELECT * FROM user WHERE token = :token", ['token' => $token]);
+            $stmt = DB::select("SELECT * FROM user WHERE token = :token", ['token' => $token]);
             $user = $stmt[0];
 
             if ($user) {
@@ -64,7 +62,7 @@ class Auth {
 
         if (isset($_COOKIE['remember_me'])) {
             setcookie('remember_me', '', time() - 3600, "/"); // Expire le cookie
-            self::$dbQuery->execute("UPDATE user SET token = NULL WHERE token = :token", ['token' => $_COOKIE['remember_me']]);
+            DB::execute("UPDATE user SET token = NULL WHERE token = :token", ['token' => $_COOKIE['remember_me']]);
         }
     }
 
@@ -80,7 +78,7 @@ class Auth {
     }
 
     public static function getUserById($id) {
-        $res = self::$dbQuery->query("SELECT * FROM user WHERE id = :id", ['id' => $id]);
+        $res = DB::select("SELECT * FROM user WHERE id = :id", ['id' => $id]);
         $user = $res[0];
         if ($user) {
             return new User($user['id'], $user['username'], $user['email'], $user['password']);
@@ -89,7 +87,7 @@ class Auth {
     }
 
     public static function getUserByUsername($username) {
-        $res = self::$dbQuery->query("SELECT * FROM user WHERE username = :username", ['username' => $username]);
+        $res = DB::select("SELECT * FROM user WHERE username = :username", ['username' => $username]);
         $user = $res[0];
         if ($user) {
             return new User($user['id'], $user['username'], $user['email'], $user['password']);

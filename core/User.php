@@ -1,5 +1,5 @@
 <?php
-namespace App\Support;
+namespace Core;
 
 class User {
     public $id;
